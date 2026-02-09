@@ -71,6 +71,7 @@ type Kv = {
 // "h.j": "l"
 export function traverse(root: unknown): Kv[] {
   const output: Kv[] = [];
+  const seenPathKeys = new Set<string>();
 
   function visit(path: string, current: unknown) {
     if (SPECIAL_KEYS.includes(path)) {
@@ -111,13 +112,9 @@ export function traverse(root: unknown): Kv[] {
         visit(path, item);
         if (typeof item === 'string') {
           const pathKey = `${path}.${item}`;
-          if (
-            !output.some(
-              kv =>
-                kv.key.toLocaleLowerCase('en-US') ===
-                pathKey.toLocaleLowerCase('en-US'),
-            )
-          ) {
+          const lowerKey = pathKey.toLocaleLowerCase('en-US');
+          if (!seenPathKeys.has(lowerKey)) {
+            seenPathKeys.add(lowerKey);
             output.push({ key: pathKey, value: true });
           }
         }
