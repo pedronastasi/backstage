@@ -32,6 +32,16 @@ describe('buildEntitySearch', () => {
       ]);
     });
 
+    it('deduplicates path keys case-insensitively', () => {
+      const input = { a: ['B', 'b'] };
+      const output = traverse(input);
+      expect(output).toEqual([
+        { key: 'a', value: 'B' },
+        { key: 'a.B', value: true },
+        { key: 'a', value: 'b' },
+      ]);
+    });
+
     it('expands objects', () => {
       const input = { a: { b: { c: 'd' }, e: 'f' } };
       const output = traverse(input);
